@@ -52,7 +52,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 SIMPLE_JWT = {
-    "TOKEN_OBTAIN_SERIALIZER": "Users.Serializer.MyTokenObtainPairSerializer",
+    "TOKEN_OBTAIN_SERIALIZER": "Users.serializers.MyTokenObtainPairSerializer",
 }
 
 MIDDLEWARE = [
