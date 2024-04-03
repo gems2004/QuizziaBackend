@@ -7,9 +7,9 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .models import Teacher, Student, User
 from .permissions import TeacherPermissions
-from .serializers import TeacherSerializer, StudentSerializer, UpdateTeacherSerializer, ResetPasswordSerializer, \
-    RenewSubscriptionSerializer
-
+from .serializers.TeacherSerializer import TeacherSerializer, UpdateTeacherSerializer, RenewSubscriptionSerializer
+from .serializers.StudentSerializer import StudentSerializer
+from .serializers.UserSerializers import  ResetPasswordSerializer
 
 # Create your views here.
 
@@ -27,30 +27,11 @@ class RegisterTeacher(APIView):
             serializer.save()
             return Response(serializer.data, status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)        
 
 
-class LoginTeacher(APIView):
-    def post(self, request):
-        try:
-            username = request.data.get("username")
-            password = request.data.get("password")
-        except Exception as e:
-            return Response({"err": str(e)}, status.HTTP_400_BAD_REQUEST)
-        teacher = None
 
-        if not teacher:
-            teacher = authenticate(username=username, password=password)
-        if teacher:
-            token, created = Token.objects.get_or_create(user=request.user)
-            return Response({"token": token.key}, status=status.HTTP_200_OK)
-
-        return Response(
-            {"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
-        )
-
-
-class LogoutTeacher(APIView):
+class Logout(APIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated, TeacherPermissions | IsAdminUser]
 

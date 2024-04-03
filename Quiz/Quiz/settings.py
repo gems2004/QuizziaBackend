@@ -52,7 +52,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 SIMPLE_JWT = {
-    "TOKEN_OBTAIN_SERIALIZER": "Users.serializers.MyTokenObtainPairSerializer",
+    "TOKEN_OBTAIN_SERIALIZER": "Users.serializers.UserSerializers.MyTokenObtainPairSerializer",
 }
 
 MIDDLEWARE = [
@@ -114,7 +114,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "QuizDB",
         "USER": "root",
-        "PASSWORD": "DaPitA",
+        "PASSWORD": "12345678",
         "HOST": "localhost",
         "PORT": "3306",
         "OPTIONS": {

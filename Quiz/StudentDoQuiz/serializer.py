@@ -3,7 +3,7 @@ from QuizMaker.Models.Questions import Questions
 from QuizMaker.Models.QuizMaker import QuizMake
 from QuizMaker.serializer import QuizSerializer
 from Users.models import Student
-from Users.serializers import StudentSerializer
+from Users.serializers.StudentSerializer import StudentSerializer
 from rest_framework import serializers
 
 from .models import StudentDoQuiz, ChosenAnswer, StudentRequest
@@ -21,6 +21,7 @@ class StudentDoQuizSerializer(serializers.ModelSerializer):
     fk_student_id = serializers.PrimaryKeyRelatedField(queryset=Student.objects)
     # fk_quiz_id = serializers.PrimaryKeyRelatedField(queryset=QuizMake.objects)
     student = StudentSerializer(source="fk_student_id", read_only=True)
+    student_did_quiz = serializers.BooleanField(read_only=True)
 
     # quiz = QuizSerializer(source="fk_quiz_id", read_only=True)
 
@@ -42,6 +43,7 @@ class StudentDoQuizSerializer(serializers.ModelSerializer):
         chosen_data = validated_data.pop("chosen")
         student_do = StudentDoQuiz.objects.create(**validated_data)
         fk_quiz_id = validated_data["fk_quiz_id"]
+        student_do.student_did_quiz = True
         questions = Questions.objects.filter(fk_quiz_id=fk_quiz_id).count()
         student_do.save()
         score = 0
@@ -71,7 +73,7 @@ class StudentRequestSerializer(serializers.ModelSerializer):
     student_data = StudentSerializer(source="student", many=False, read_only=True)
     quiz_data = QuizSerializer(source="quiz", many=False, read_only=True)
     quiz_token = serializers.CharField(write_only=True)
-
+    approved = serializers.BooleanField(required=False)
     class Meta:
         model = StudentRequest
         fields = [

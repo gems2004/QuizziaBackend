@@ -72,6 +72,7 @@ class StudentRequestView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        request.data['student'] = request.user.student.id
         serializer = StudentRequestSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -112,15 +113,13 @@ class ApproveToStudent(APIView):
     permission_classes = [IsAuthenticated, TeacherPermissions | IsAdminUser]
 
     def post(self, request, pk):
-
         student_request = StudentRequest.objects.get(pk=pk)
         try:
             serializer = StudentRequestSerializer(
                 instance=student_request, data=request.data
             )
             if serializer.is_valid():
-
-                serializer.save(approved=True)
+                serializer.save()
                 return Response(serializer.data, status.HTTP_201_CREATED)
             else:
 
@@ -128,27 +127,6 @@ class ApproveToStudent(APIView):
         except Exception as e:
             return Response(str(e))
 
-
-class DeclineToStudent(APIView):
-    authentication_classes = [TokenAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated, TeacherPermissions | IsAdminUser]
-
-    def post(self, request, pk):
-
-        student_request = StudentRequest.objects.get(pk=pk)
-        try:
-            serializer = StudentRequestSerializer(
-                instance=student_request, data=request.data
-            )
-            if serializer.is_valid():
-
-                serializer.save(approved=False)
-                return Response(serializer.data, status.HTTP_201_CREATED)
-            else:
-
-                return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response(str(e))
 
 
 class StartQuiz(APIView):
