@@ -1,4 +1,7 @@
 from rest_framework import serializers
+
+from Bundles.models import Bundle
+from Users.models import Teacher
 from .Models.QuizMaker import QuizMake
 from .Models.Answers import Answers
 from .Models.Questions import Questions
@@ -67,3 +70,21 @@ class QuizSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+    
+    def validate(self, attrs):
+        no_of_quizzes = 0
+        no_of_questions = 0
+        get_quizzes = QuizMake.objects.filter(fk_teacher_id=attrs['fk_teacher_id'].id)
+        get_no_of_quizzes = QuizMake.objects.filter(fk_teacher_id=attrs['fk_teacher_id'].id).count()
+        no_of_quizzes = get_no_of_quizzes
+        get_user_data = Teacher.objects.get(pk=attrs['fk_teacher_id'].id)
+        get_bundle_data = Bundle.objects.get(pk=get_user_data.fk_bundle.id)
+        for quiz in get_quizzes:
+            get_questions = Questions.objects.filter(fk_quiz_id=quiz.id).count()
+            no_of_questions += get_questions
+        print(no_of_quizzes, no_of_questions, get_bundle_data.no_of_quizzes, get_bundle_data.no_of_questions)
+        if no_of_quizzes >= get_bundle_data.no_of_quizzes and no_of_questions >= get_bundle_data.no_of_questions:
+            raise serializers.ValidationError("teacher exceeded limits please upgrade your bundle")
+        else:
+            return attrs
+    

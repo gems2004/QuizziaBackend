@@ -17,12 +17,15 @@ class QuizMakerAPIView(APIView):
     permission_classes = [IsAuthenticated, TeacherPermissions | IsAdminUser]
 
     def post(self,request):
-        quiz = request.data
-        serializer = QuizSerializer(data=quiz, many=False)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status.HTTP_201_CREATED)
-        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+        try:
+            request.data['fk_teacher_id'] = request.user.teacher.id
+            serializer = QuizSerializer(data=request.data, many=False)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status.HTTP_201_CREATED)
+            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(str(e))
 class QuizAPIView(APIView):
     authentication_classes = [TokenAuthentication,JWTAuthentication]
     permission_classes = [IsAuthenticated, TeacherPermissions | IsAdminUser]
