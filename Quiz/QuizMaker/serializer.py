@@ -38,7 +38,7 @@ class QuizSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         questions_data = validated_data.pop("questions")
-
+        print(req_time, current_time)
         quiz = QuizMake.objects.create(
             name=validated_data["name"],
             req_time=validated_data["req_time"],
@@ -59,7 +59,6 @@ class QuizSerializer(serializers.ModelSerializer):
             "fk_teacher_id", instance.fk_teacher_id
         )
 
-        # Update questions
         questions_data = validated_data.get("questions", [])
         instance.questions.all().delete()
         for question_data in questions_data:
@@ -83,7 +82,7 @@ class QuizSerializer(serializers.ModelSerializer):
             get_questions = Questions.objects.filter(fk_quiz_id=quiz.id).count()
             no_of_questions += get_questions
         print(no_of_quizzes, no_of_questions, get_bundle_data.no_of_quizzes, get_bundle_data.no_of_questions)
-        if no_of_quizzes >= get_bundle_data.no_of_quizzes and no_of_questions >= get_bundle_data.no_of_questions:
+        if no_of_quizzes >= get_bundle_data.no_of_quizzes or no_of_questions >= get_bundle_data.no_of_questions:
             raise serializers.ValidationError("teacher exceeded limits please upgrade your bundle")
         else:
             return attrs
