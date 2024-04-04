@@ -1,5 +1,4 @@
 from django.db import models
-from django. import include
 from Users.models import Teacher
 
 
