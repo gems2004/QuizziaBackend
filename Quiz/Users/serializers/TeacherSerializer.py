@@ -70,7 +70,7 @@ class RenewSubscriptionSerializer(serializers.Serializer):
     teacher_id = serializers.IntegerField()
 
     def save(self):
-        teacher_id = self.validated_data["teacher_id"]
+        teacher_id = self.validated_data['teacher_id']
         teacher = Teacher.objects.get(id=teacher_id)
         if teacher.fk_bundle.name == "free":
             raise serializers.ValidationError(
@@ -89,7 +89,8 @@ class UpdateTeacherSerializer(serializers.Serializer):
     user = UpdateUserSerializer(required=False, partial=True)
     fullname = serializers.CharField(required=False)
     subject = serializers.CharField(required=False)
-    fk_bundle = serializers.PrimaryKeyRelatedField(queryset=Bundle.objects.all(), required=False)
+    fk_bundle = serializers.PrimaryKeyRelatedField(queryset=Bundle.objects.all(), required=False, write_only=True)
+    fk_bundle_id = serializers.IntegerField(required=False)
 
     class Meta:
         model = Teacher
@@ -97,7 +98,7 @@ class UpdateTeacherSerializer(serializers.Serializer):
             "user",
             "fullname",
             "subject",
-            "fk_bundle",
+            "fk_bundle_id",
         ]
 
     def update(self, instance, validated_data):
@@ -106,8 +107,7 @@ class UpdateTeacherSerializer(serializers.Serializer):
         instance.user.password = user_data.get('password', instance.user.password)
         instance.fullname = validated_data.get('fullname', instance.fullname)
         instance.subject = validated_data.get('subject', instance.subject)
-        instance.bundle_data = validated_data.get('fk_bundle', instance.fk_bundle)
-        instance.save()
+        instance.fk_bundle_id = validated_data.get('fk_bundle_id', instance.fk_bundle_id)
         instance.save()
         return instance
 

@@ -13,7 +13,8 @@ class Command(BaseCommand):
         for teacher in teachers_to_check:
             if teacher.bundle_expiry < current_date:
                 teacher.is_subscribed = False
-                teacher.fk_bundle = 1
+                teacher.fk_bundle_id = 1
+                teacher.bundle_expiry = None
                 teacher.save()
                 self.stdout.write(self.style.SUCCESS(f'Teacher {teacher.fullname} subscription expired.'))
             else:

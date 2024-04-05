@@ -25,6 +25,7 @@ class RegisterTeacher(APIView):
             return Response({"err": str(e)}, status.HTTP_400_BAD_REQUEST)
         if serializer.is_valid():
             serializer.save()
+            subscription = RenewSubscriptionSerializer(data={'teacher_id':serializer.data['teacher_id']})
             return Response(serializer.data, status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)        
@@ -52,6 +53,7 @@ class RegisterStudent(APIView):
             return Response({"err": str(e)}, status.HTTP_400_BAD_REQUEST)
         if serializer.is_valid():
             serializer.save()
+
             return Response(serializer.data, status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
@@ -118,10 +120,15 @@ class RetrieveTeacher(APIView):
         try:
             teacher = Teacher.objects.get(pk=pk)
             serializer = UpdateTeacherSerializer(teacher, data=request.data, many=False)
+            subscription = RenewSubscriptionSerializer(data={'teacher_id': teacher.id})
         except Exception as e:
             return Response({"err": str(e)}, status.HTTP_400_BAD_REQUEST)
         if serializer.is_valid():
             serializer.update(teacher, request.data)
+            if subscription.is_valid():
+                subscription.save()
+            else:
+                return Response(subscription.errors)
             return Response(serializer.data, status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
