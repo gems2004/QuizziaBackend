@@ -8,5 +8,4 @@ class Bundle(models.Model):
     price = models.DecimalField(max_digits=20,decimal_places=3)
     no_of_questions = models.IntegerField()
     no_of_quizzes = models.IntegerField()
-    no_of_students = models.IntegerField()
 
