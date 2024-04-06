@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from Users.models import Student
+from Users.models import Student, Teacher
 from StudentDoQuiz.models import StudentRequest
 
 
@@ -28,3 +28,8 @@ class TeacherApprovedToStudent(BasePermission):
             return False
         if request.user.role == "Student" and student_request.approved == True:
             return True
+
+
+class ManagerPermissions(BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user.role == "Manager")

@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser, Group
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from Bundles.models import Bundle
 
@@ -7,8 +7,13 @@ class User(AbstractUser):
     role = models.CharField(max_length=50)
 
 
+class Manager(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    fk_manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     fullname = models.CharField(max_length=100)
     bundle_expiry = models.DateField(null=True)
     is_subscribed = models.BooleanField(default=False)
