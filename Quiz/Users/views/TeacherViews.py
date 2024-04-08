@@ -6,7 +6,11 @@ from rest_framework.views import Response, status
 
 from Users.models import Teacher, User
 from Users.permissions import ManagerPermissions, TeacherPermissions
-from Users.serializers.TeacherSerializer import RenewSubscriptionSerializer, TeacherSerializer, UpdateTeacherSerializer
+from Users.serializers.TeacherSerializer import (
+    RenewSubscriptionSerializer,
+    TeacherSerializer,
+    UpdateTeacherSerializer,
+)
 
 
 class RegisterTeacher(APIView):
@@ -15,6 +19,7 @@ class RegisterTeacher(APIView):
 
     def post(self, request):
         try:
+            request.data["fk_manager"] = request.user.manager.id or None
             serializer = TeacherSerializer(data=request.data)
         except Exception as e:
             return Response({"err": str(e)}, status.HTTP_400_BAD_REQUEST)

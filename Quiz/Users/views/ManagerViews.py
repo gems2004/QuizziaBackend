@@ -3,11 +3,12 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import Response, status
+from Quiz.Users.serializers.TeacherSerializer import TeacherSerializer
 from Users.serializers.ManagerSerializer import (
     ManagerSerializer,
     UpdateManagerSerializer,
 )
-from Users.models import Manager
+from Users.models import Manager, Student, Teacher
 
 
 class CreateManager(APIView):
@@ -70,3 +71,13 @@ class RetrieveManager(APIView):
             return Response("deleted successfully", status.HTTP_200_OK)
         except Exception as e:
             return Response(str(e), status.HTTP_400_BAD_REQUEST)
+
+
+class TeachersOfManager(APIView):
+    def get(self, request, pk):
+        try:
+            teachers = Teacher.objects.filter(fk_manager_id=pk)
+            serializer = TeacherSerializer(teachers, many=True)
+            return Response(serializer.data, status.HTTP_200_OK)
+        except Exception as e:
+            return Response(str(e), status.HTTP_404_NOT_FOUND)
