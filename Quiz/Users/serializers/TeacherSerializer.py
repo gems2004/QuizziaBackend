@@ -7,6 +7,7 @@ from QuizMaker.Models.QuizMaker import QuizMake
 from QuizMaker.Models.Questions import Questions
 from Bundles.models import Bundle
 
+
 class TeacherSerializer(serializers.ModelSerializer):
     teacher_id = serializers.PrimaryKeyRelatedField(read_only=True, source="id")
     user = UserSerializer(many=False)
@@ -17,12 +18,14 @@ class TeacherSerializer(serializers.ModelSerializer):
     no_of_quizzes = serializers.SerializerMethodField()
     no_of_questions = serializers.SerializerMethodField()
     is_subscribed = serializers.BooleanField(read_only=True)
+    fk_manager = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Teacher
         fields = [
             "user",
             "teacher_id",
+            "fk_manager",
             "fullname",
             "subject",
             "is_subscribed",
@@ -70,7 +73,7 @@ class RenewSubscriptionSerializer(serializers.Serializer):
     teacher_id = serializers.IntegerField()
 
     def save(self):
-        teacher_id = self.validated_data['teacher_id']
+        teacher_id = self.validated_data["teacher_id"]
         teacher = Teacher.objects.get(id=teacher_id)
         if teacher.fk_bundle.name == "free":
             raise serializers.ValidationError(
@@ -89,25 +92,25 @@ class UpdateTeacherSerializer(serializers.Serializer):
     user = UpdateUserSerializer(required=False, partial=True)
     fullname = serializers.CharField(required=False)
     subject = serializers.CharField(required=False)
-    fk_bundle = serializers.PrimaryKeyRelatedField(queryset=Bundle.objects.all(), required=False, write_only=True)
+    fk_bundle = serializers.PrimaryKeyRelatedField(
+        queryset=Bundle.objects.all(), required=False, write_only=True
+    )
     fk_bundle_id = serializers.IntegerField(required=False)
+    fk_manager = serializers.IntegerField(required=False)
 
     class Meta:
         model = Teacher
-        fields = [
-            "user",
-            "fullname",
-            "subject",
-            "fk_bundle_id",
-        ]
+        fields = ["user", "fullname", "subject", "fk_bundle_id", "fk_manager"]
 
     def update(self, instance, validated_data):
-        user_data = validated_data.pop('user', {})
-        instance.user.username = user_data.get('username', instance.user.username)
-        instance.user.password = user_data.get('password', instance.user.password)
-        instance.fullname = validated_data.get('fullname', instance.fullname)
-        instance.subject = validated_data.get('subject', instance.subject)
-        instance.fk_bundle_id = validated_data.get('fk_bundle_id', instance.fk_bundle_id)
+        user_data = validated_data.pop("user", {})
+        instance.user.username = user_data.get("username", instance.user.username)
+        instance.user.password = user_data.get("password", instance.user.password)
+        instance.fullname = validated_data.get("fullname", instance.fullname)
+        instance.subject = validated_data.get("subject", instance.subject)
+        instance.fk_bundle_id = validated_data.get(
+            "fk_bundle_id", instance.fk_bundle_id
+        )
+        instance.fk_manager = validated_data.get("fk_manager", instance.fk_manager)
         instance.save()
         return instance
-
