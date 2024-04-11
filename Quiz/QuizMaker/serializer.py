@@ -38,7 +38,6 @@ class QuizSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         questions_data = validated_data.pop("questions")
-        print(req_time, current_time)
         quiz = QuizMake.objects.create(
             name=validated_data["name"],
             req_time=validated_data["req_time"],
@@ -69,21 +68,32 @@ class QuizSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-    
+
     def validate(self, attrs):
         no_of_quizzes = 0
         no_of_questions = 0
-        get_quizzes = QuizMake.objects.filter(fk_teacher_id=attrs['fk_teacher_id'].id)
-        get_no_of_quizzes = QuizMake.objects.filter(fk_teacher_id=attrs['fk_teacher_id'].id).count()
+        get_quizzes = QuizMake.objects.filter(fk_teacher_id=attrs["fk_teacher_id"].id)
+        get_no_of_quizzes = QuizMake.objects.filter(
+            fk_teacher_id=attrs["fk_teacher_id"].id
+        ).count()
         no_of_quizzes = get_no_of_quizzes
-        get_user_data = Teacher.objects.get(pk=attrs['fk_teacher_id'].id)
+        get_user_data = Teacher.objects.get(pk=attrs["fk_teacher_id"].id)
         get_bundle_data = Bundle.objects.get(pk=get_user_data.fk_bundle.id)
         for quiz in get_quizzes:
             get_questions = Questions.objects.filter(fk_quiz_id=quiz.id).count()
             no_of_questions += get_questions
-        print(no_of_quizzes, no_of_questions, get_bundle_data.no_of_quizzes, get_bundle_data.no_of_questions)
-        if no_of_quizzes >= get_bundle_data.no_of_quizzes or no_of_questions >= get_bundle_data.no_of_questions:
-            raise serializers.ValidationError("teacher exceeded limits please upgrade your bundle")
+        print(
+            no_of_quizzes,
+            no_of_questions,
+            get_bundle_data.no_of_quizzes,
+            get_bundle_data.no_of_questions,
+        )
+        if (
+            no_of_quizzes >= get_bundle_data.no_of_quizzes
+            or no_of_questions >= get_bundle_data.no_of_questions
+        ):
+            raise serializers.ValidationError(
+                "teacher exceeded limits please upgrade your bundle"
+            )
         else:
             return attrs
-    
