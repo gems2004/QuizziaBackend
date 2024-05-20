@@ -23,7 +23,10 @@ from .serializer import (
 # Create your views here.
 class SubmitStudentQuiz(APIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated, TeacherPermissions | IsAdminUser]
+    permission_classes = [
+        IsAuthenticated,
+        TeacherPermissions | IsAdminUser | StudentPermissions,
+    ]
 
     def post(self, request):
         serializer = StudentDoQuizSerializer(data=request.data, many=False)
@@ -72,7 +75,7 @@ class StudentRequestView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        request.data['student'] = request.user.student.id
+        request.data["student"] = request.user.student.id
         serializer = StudentRequestSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -101,7 +104,9 @@ class TeacherRequests(APIView):
     def get(self, request):
         try:
             teacher = request.user.teacher
-            requests = StudentRequest.objects.filter(quiz__fk_teacher_id=teacher.id, approved=None)
+            requests = StudentRequest.objects.filter(
+                quiz__fk_teacher_id=teacher.id, approved=None
+            )
             serializer = StudentRequestSerializer(requests, many=True)
             return Response(serializer.data)
         except Exception as e:
@@ -126,7 +131,6 @@ class ApproveToStudent(APIView):
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response(str(e))
-
 
 
 class StartQuiz(APIView):

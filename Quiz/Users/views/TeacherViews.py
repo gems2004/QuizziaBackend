@@ -15,11 +15,10 @@ from Users.serializers.TeacherSerializer import (
 
 class RegisterTeacher(APIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsAdminUser, ManagerPermissions]
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
     def post(self, request):
         try:
-            request.data["fk_manager"] = request.user.manager.id or None
             serializer = TeacherSerializer(data=request.data)
         except Exception as e:
             return Response({"err": str(e)}, status.HTTP_400_BAD_REQUEST)

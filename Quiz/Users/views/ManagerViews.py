@@ -3,7 +3,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import Response, status
-from Quiz.Users.serializers.TeacherSerializer import TeacherSerializer
+from Users.serializers.TeacherSerializer import TeacherSerializer
 from Users.serializers.ManagerSerializer import (
     ManagerSerializer,
     UpdateManagerSerializer,

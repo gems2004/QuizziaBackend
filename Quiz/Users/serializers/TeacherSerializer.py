@@ -18,14 +18,12 @@ class TeacherSerializer(serializers.ModelSerializer):
     no_of_quizzes = serializers.SerializerMethodField()
     no_of_questions = serializers.SerializerMethodField()
     is_subscribed = serializers.BooleanField(read_only=True)
-    fk_manager = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Teacher
         fields = [
             "user",
             "teacher_id",
-            "fk_manager",
             "fullname",
             "subject",
             "is_subscribed",

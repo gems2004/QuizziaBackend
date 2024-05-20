@@ -114,7 +114,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "QuizDB",
         "USER": "root",
-        "PASSWORD": "12345678",
+        "PASSWORD": "zaq321xsw",
         "HOST": "localhost",
         "PORT": "3306",
         "OPTIONS": {
