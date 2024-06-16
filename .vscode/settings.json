@@ -1,0 +1,14 @@
+{
+    "sqltools.useNodeRuntime": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "Db",
+            "database": "${workspaceFolder:Quizzia 2.0}/Quizzia/db.sqlite3"
+        }
+    ],
+    "cSpell.words": [
+        "Erialzier"
+    ]
+}
